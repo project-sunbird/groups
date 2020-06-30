@@ -10,8 +10,9 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -41,10 +42,10 @@ public class CreateGroupActorTest extends BaseActorTest {
 
   private final Props props = Props.create(CreateGroupActor.class);
 
-  private Request reqObj;
+  private static Request reqObj;
 
-  @Before
-  public void beforeEachTest() throws Exception {
+  @BeforeClass
+  public static void setUp() throws Exception {
     reqObj = createGroupReq();
     PowerMockito.mockStatic(Localizer.class);
     when(Localizer.getInstance()).thenReturn(null);
@@ -76,12 +77,17 @@ public class CreateGroupActorTest extends BaseActorTest {
     Assert.assertNotNull(res.getResult().get(JsonKey.GROUP_ID));
   }
 
-  private Request createGroupReq() {
+  private static Request createGroupReq() {
     Request reqObj = new Request();
     reqObj.setOperation(ActorOperations.CREATE_GROUP.getValue());
     reqObj.getRequest().put(JsonKey.GROUP_NAME, "TestGroup Name");
     reqObj.getRequest().put(JsonKey.GROUP_DESC, "TestGroup Description");
     reqObj.getRequest().put(JsonKey.ID, UUID.randomUUID().toString());
     return reqObj;
+  }
+
+  @AfterClass
+  public static void tearDown() throws Exception {
+    EmbeddedCassandra.close();
   }
 }
