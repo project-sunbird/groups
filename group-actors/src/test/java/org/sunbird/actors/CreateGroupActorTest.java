@@ -79,6 +79,7 @@ public class CreateGroupActorTest extends BaseActorTest {
 
   private static Request createGroupReq() {
     Request reqObj = new Request();
+    reqObj.setHeaders(headerMap);
     reqObj.setOperation(ActorOperations.CREATE_GROUP.getValue());
     reqObj.getRequest().put(JsonKey.GROUP_NAME, "TestGroup Name");
     reqObj.getRequest().put(JsonKey.GROUP_DESC, "TestGroup Description");
