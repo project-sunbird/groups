@@ -3,7 +3,9 @@ package org.sunbird.models;
 /** This enum will contains different operation for group APIs */
 public enum ActorOperations {
   CREATE_GROUP("createGroup"),
-  UPDATE_GROUP("updateGroup");
+  UPDATE_GROUP("updateGroup"),
+  READ_GROUP("readGroup"),
+  SEARCH_GROUP("searchGroup");
 
   private String value;
 
