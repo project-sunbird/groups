@@ -47,7 +47,12 @@ public class UpdateGroupActor extends BaseActor {
 
     // member operations to group
     Map memberOperationMap = (Map) actorMessage.getRequest().get(JsonKey.MEMBERS);
-    memberService.handleMemberOperations(memberOperationMap, group.getId());
+    if (MapUtils.isNotEmpty(memberOperationMap)) {
+      memberService.handleMemberOperations(
+          memberOperationMap,
+          group.getId(),
+          (String) actorMessage.getContext().get(JsonKey.USER_ID));
+    }
 
     Map activityOperationMap = (Map) actorMessage.getRequest().get(JsonKey.ACTIVITIES);
     if (MapUtils.isNotEmpty(activityOperationMap)) {
