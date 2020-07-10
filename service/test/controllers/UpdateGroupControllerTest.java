@@ -1,5 +1,6 @@
 package controllers;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -77,6 +78,6 @@ public class UpdateGroupControllerTest extends BaseApplicationTest {
     reqMap.put(JsonKey.ACTIVITIES, activities);
     request.put("request", reqMap);
     Result result = performTest("/v1/group/update", "PATCH", request);
-    assertTrue(getResponseStatus(result) == Response.Status.BAD_REQUEST.getStatusCode());
+    assertEquals(getResponseStatus(result), Response.Status.BAD_REQUEST.getStatusCode());
   }
 }
