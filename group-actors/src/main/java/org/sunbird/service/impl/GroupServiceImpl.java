@@ -191,7 +191,7 @@ public class GroupServiceImpl implements GroupService {
 
   @Override
   public List<Map<String, Object>> handleActivityOperations(
-      String groupId, Map activityOperationMap) throws BaseException {
+      String groupId, Map<String, Object> activityOperationMap) throws BaseException {
     List<Map<String, Object>> activityAddList =
         (List<Map<String, Object>>) activityOperationMap.get(JsonKey.ADD);
     List<String> activityRemoveList = (List<String>) activityOperationMap.get(JsonKey.REMOVE);
