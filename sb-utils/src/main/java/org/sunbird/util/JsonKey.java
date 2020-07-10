@@ -100,7 +100,5 @@ public interface JsonKey {
   String CONTENT = "content";
   String USERNAME = "userName";
   String RESULT = "result";
-  String REMOVE = "remove";
-  String ADD = "add";
   String ACTIVITY = "activity";
 }
