@@ -86,6 +86,8 @@ public class GroupServiceImpl implements GroupService {
         if (CollectionUtils.isEmpty(fields) || !fields.contains(JsonKey.ACTIVITIES)) {
           dbResGroup.remove(JsonKey.ACTIVITIES);
         }
+      } else {
+        throw new ValidationException.InvalidGroupId(groupId);
       }
     }
     return dbResGroup;
