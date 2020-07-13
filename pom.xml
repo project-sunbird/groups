@@ -38,5 +38,6 @@
         <module>group-actors</module>
         <module>cassandra-utils</module>
         <module>service</module>
+        <module>platform-cache</module>
     </modules>
 </project>
