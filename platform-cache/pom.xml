@@ -10,10 +10,6 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>platform-cache</artifactId>
 
-    <properties>
-        <jedis.version>2.6.2</jedis.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.scala-lang</groupId>
@@ -23,7 +19,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.25</version>
+            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>redis.clients</groupId>
@@ -39,7 +35,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.9</version>
+            <version>${commonsLang3.version}</version>
         </dependency>
         <dependency>
             <groupId>com.typesafe</groupId>
