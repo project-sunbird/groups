@@ -29,7 +29,6 @@ import org.sunbird.service.MemberService;
 import org.sunbird.util.ActivityConfigReader;
 import org.sunbird.util.GroupUtil;
 import org.sunbird.util.JsonKey;
-import org.sunbird.util.JsonUtils;
 import org.sunbird.util.SearchServiceUtil;
 
 public class GroupServiceImpl implements GroupService {
@@ -83,7 +82,7 @@ public class GroupServiceImpl implements GroupService {
         if (CollectionUtils.isNotEmpty(fields)) {
           if (fields.contains(JsonKey.MEMBERS)) {
             List<MemberResponse> members =
-:                 memberService.fetchMembersByGroupIds(Lists.newArrayList(groupId), null);
+                memberService.fetchMembersByGroupIds(Lists.newArrayList(groupId), null);
             dbResGroup.put(JsonKey.MEMBERS, members);
           }
           if (fields.contains(JsonKey.ACTIVITIES)) {
@@ -265,7 +264,7 @@ public class GroupServiceImpl implements GroupService {
     return groupResponse;
   }
 
-  //TODO should be private function : break into 2 functions add and remove
+  // TODO should be private function : break into 2 functions add and remove
   @Override
   public List<Map<String, Object>> handleActivityOperations(
       String groupId, Map<String, Object> activityOperationMap) throws BaseException {
