@@ -11,7 +11,12 @@ public interface GroupService {
 
   String createGroup(Group groupObj) throws BaseException;
 
-  Map<String, Object> readGroup(String groupId, List<String> fields) throws BaseException;
+  // TODO return group object
+  Map<String, Object> readGroup(String groupId, List<String> fields) throws Exception;
+  // TODO
+  // readGroupMembers
+  // readGroupActivities
+  // readGroup without fields
 
   List<GroupResponse> searchGroup(Map<String, Object> searchFilter) throws BaseException;
 

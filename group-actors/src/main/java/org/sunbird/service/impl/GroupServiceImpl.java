@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +29,7 @@ import org.sunbird.service.MemberService;
 import org.sunbird.util.ActivityConfigReader;
 import org.sunbird.util.GroupUtil;
 import org.sunbird.util.JsonKey;
+import org.sunbird.util.JsonUtils;
 import org.sunbird.util.SearchServiceUtil;
 
 public class GroupServiceImpl implements GroupService {
@@ -54,7 +54,7 @@ public class GroupServiceImpl implements GroupService {
   }
 
   @Override
-  public Map<String, Object> readGroup(String groupId, List<String> fields) throws BaseException {
+  public Map<String, Object> readGroup(String groupId, List<String> fields) throws Exception {
     Map<String, Object> dbResGroup = new HashMap<>();
     Response responseObj = groupDao.readGroup(groupId);
     if (null != responseObj && null != responseObj.getResult()) {
@@ -71,19 +71,19 @@ public class GroupServiceImpl implements GroupService {
         dbResGroup.put(
             JsonKey.CREATED_ON,
             dbResGroup.get(JsonKey.CREATED_ON) != null
-                ? GroupUtil.convertDateToUTC((Date) dbResGroup.get(JsonKey.CREATED_ON))
+                ? GroupUtil.convertDateToUTC(dbResGroup.get(JsonKey.CREATED_ON))
                 : dbResGroup.get(JsonKey.CREATED_ON));
 
         dbResGroup.put(
             JsonKey.UPDATED_ON,
             dbResGroup.get(JsonKey.UPDATED_ON) != null
-                ? GroupUtil.convertDateToUTC((Date) dbResGroup.get(JsonKey.UPDATED_ON))
+                ? GroupUtil.convertDateToUTC(dbResGroup.get(JsonKey.UPDATED_ON))
                 : dbResGroup.get(JsonKey.UPDATED_ON));
 
         if (CollectionUtils.isNotEmpty(fields)) {
           if (fields.contains(JsonKey.MEMBERS)) {
             List<MemberResponse> members =
-                memberService.fetchMembersByGroupIds(Lists.newArrayList(groupId), null);
+:                 memberService.fetchMembersByGroupIds(Lists.newArrayList(groupId), null);
             dbResGroup.put(JsonKey.MEMBERS, members);
           }
           if (fields.contains(JsonKey.ACTIVITIES)) {
@@ -265,6 +265,7 @@ public class GroupServiceImpl implements GroupService {
     return groupResponse;
   }
 
+  //TODO should be private function : break into 2 functions add and remove
   @Override
   public List<Map<String, Object>> handleActivityOperations(
       String groupId, Map<String, Object> activityOperationMap) throws BaseException {

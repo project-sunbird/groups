@@ -71,6 +71,9 @@ public class GroupDaoImpl implements GroupDao {
 
   @Override
   public Response updateGroup(Group groupObj) throws BaseException {
+    // TODO delete the cache if any group is updated
+    //
+    // RedisCache.delete(JavaConverters.asScalaIteratorConverter(Arrays.asList(groupObj.getId()).iterator()).asScala().toSeq());
     Map<String, Object> map = mapper.convertValue(groupObj, Map.class);
     map.put(JsonKey.UPDATED_ON, new Timestamp(Calendar.getInstance().getTime().getTime()));
     Response responseObj =

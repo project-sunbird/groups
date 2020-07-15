@@ -3,6 +3,7 @@ package org.sunbird.service.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sunbird.cache.impl.RedisCache;
 import org.sunbird.dao.MemberDao;
 import org.sunbird.dao.impl.MemberDaoImpl;
 import org.sunbird.exception.BaseException;
@@ -21,6 +23,8 @@ import org.sunbird.service.MemberService;
 import org.sunbird.service.UserService;
 import org.sunbird.util.GroupUtil;
 import org.sunbird.util.JsonKey;
+import org.sunbird.util.JsonUtils;
+import scala.collection.JavaConverters;
 
 public class MemberServiceImpl implements MemberService {
 
@@ -102,6 +106,11 @@ public class MemberServiceImpl implements MemberService {
             .map(data -> getMemberModelForAdd(data, groupId, contextUserId))
             .collect(Collectors.toList());
     if (!members.isEmpty()) {
+      RedisCache.delete(
+          JavaConverters.asScalaIteratorConverter(
+                  Arrays.asList(groupId + "_" + JsonKey.MEMBERS).iterator())
+              .asScala()
+              .toSeq());
       addMemberRes = addMembers(members);
     }
     return addMemberRes;
@@ -119,28 +128,36 @@ public class MemberServiceImpl implements MemberService {
    */
   @Override
   public List<MemberResponse> fetchMembersByGroupIds(List<String> groupIds, List<String> fields)
-      throws BaseException {
-    Response response = memberDao.fetchMembersByGroupIds(groupIds, fields);
-    List<MemberResponse> members = new ArrayList<>();
-
-    if (null != response && null != response.getResult()) {
-      List<Map<String, Object>> dbResMembers =
-          (List<Map<String, Object>>) response.getResult().get(JsonKey.RESPONSE);
-      if (null != dbResMembers) {
-        dbResMembers.forEach(
-            map -> {
-              Member member = objectMapper.convertValue(map, Member.class);
-              if (JsonKey.ACTIVE.equals(member.getStatus())) {
-                MemberResponse memberResponse = createMemberResponseObj(member);
-                members.add(memberResponse);
-              }
-            });
+      throws Exception {
+    String groupMembers = RedisCache.get(groupIds.get(0) + "_" + JsonKey.MEMBERS, null, 0);
+    if (StringUtils.isNotEmpty(groupMembers)) {
+      List<MemberResponse> members = new ArrayList<>();
+      members = JsonUtils.deserialize(groupMembers, members.getClass());
+      return members;
+    } else {
+      List<MemberResponse> members = new ArrayList<>();
+      Response response = memberDao.fetchMembersByGroupIds(groupIds, fields);
+      if (null != response && null != response.getResult()) {
+        List<Map<String, Object>> dbResMembers =
+            (List<Map<String, Object>>) response.getResult().get(JsonKey.RESPONSE);
+        if (null != dbResMembers) {
+          dbResMembers.forEach(
+              map -> {
+                Member member = objectMapper.convertValue(map, Member.class);
+                if (JsonKey.ACTIVE.equals(member.getStatus())) {
+                  MemberResponse memberResponse = createMemberResponseObj(member);
+                  members.add(memberResponse);
+                }
+              });
+        }
       }
+      if (!members.isEmpty()) {
+        fetchMemberDetails(members);
+      }
+      // groupId_members
+      GroupUtil.setCache(groupIds.get(0) + "_" + JsonKey.MEMBERS, JsonUtils.serialize(members));
+      return members;
     }
-    if (!members.isEmpty()) {
-      fetchMemberDetails(members);
-    }
-    return members;
   }
 
   private void fetchMemberDetails(List<MemberResponse> members) throws BaseException {
