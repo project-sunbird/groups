@@ -16,11 +16,11 @@ public interface GroupService {
 
   List<MemberResponse> readGroupMembers(String groupId) throws Exception;
 
+  void readGroupActivities(Map<String, Object> dbResGroup);
+
   List<GroupResponse> searchGroup(Map<String, Object> searchFilter) throws BaseException;
 
   Response updateGroup(Group groupObj) throws BaseException;
-
-  void readGroupActivities(Map<String, Object> dbResGroup);
 
   List<Map<String, Object>> handleActivityOperations(
       String groupId, Map<String, Object> activityOperationMap) throws BaseException;

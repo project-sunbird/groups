@@ -1,6 +1,5 @@
 package org.sunbird.models;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.io.Serializable;
@@ -19,17 +18,14 @@ public class Member implements Serializable {
   private String role;
   private String status;
 
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss:SSSZ")
   private Timestamp createdOn;
 
   private String createdBy;
 
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss:SSSZ")
   private Timestamp updatedOn;
 
   private String updatedBy;
 
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss:SSSZ")
   private Timestamp removedOn;
 
   private String removedBy;

@@ -139,26 +139,26 @@
                     </includes>
                 </configuration>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>org.codehaus.mojo</groupId>-->
-<!--                <artifactId>findbugs-maven-plugin</artifactId>-->
-<!--                <version>3.0.4</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>findbug</id>-->
-<!--                        <phase>verify</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>check</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--                <configuration>-->
-<!--                    <findbugsXmlOutputDirectory>-->
-<!--                        ${project.build.directory}/findbugs-->
-<!--                    </findbugsXmlOutputDirectory>-->
-<!--                    <failOnError>false</failOnError>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>3.0.4</version>
+                <executions>
+                    <execution>
+                        <id>findbug</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <findbugsXmlOutputDirectory>
+                        ${project.build.directory}/findbugs
+                    </findbugsXmlOutputDirectory>
+                    <failOnError>false</failOnError>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>

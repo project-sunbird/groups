@@ -3,7 +3,6 @@ package org.sunbird.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +11,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sunbird.cache.impl.RedisCache;
 import org.sunbird.dao.MemberDao;
 import org.sunbird.dao.MemberDaoImpl;
 import org.sunbird.exception.BaseException;
@@ -21,7 +19,6 @@ import org.sunbird.models.MemberResponse;
 import org.sunbird.response.Response;
 import org.sunbird.util.GroupUtil;
 import org.sunbird.util.JsonKey;
-import scala.collection.JavaConverters;
 
 public class MemberServiceImpl implements MemberService {
 
@@ -103,11 +100,6 @@ public class MemberServiceImpl implements MemberService {
             .map(data -> getMemberModelForAdd(data, groupId, contextUserId))
             .collect(Collectors.toList());
     if (!members.isEmpty()) {
-      RedisCache.delete(
-          JavaConverters.asScalaIteratorConverter(
-                  Arrays.asList(groupId + "_" + JsonKey.MEMBERS).iterator())
-              .asScala()
-              .toSeq());
       addMemberRes = addMembers(members);
     }
     return addMemberRes;
@@ -126,8 +118,8 @@ public class MemberServiceImpl implements MemberService {
   @Override
   public List<MemberResponse> fetchMembersByGroupIds(List<String> groupIds, List<String> fields)
       throws BaseException {
-    List<MemberResponse> members = new ArrayList<>();
     Response response = memberDao.fetchMembersByGroupIds(groupIds, fields);
+    List<MemberResponse> members = new ArrayList<>();
     if (null != response && null != response.getResult()) {
       List<Map<String, Object>> dbResMembers =
           (List<Map<String, Object>>) response.getResult().get(JsonKey.RESPONSE);
