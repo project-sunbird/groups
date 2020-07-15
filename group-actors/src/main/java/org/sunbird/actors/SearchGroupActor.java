@@ -10,7 +10,7 @@ import org.sunbird.models.GroupResponse;
 import org.sunbird.request.Request;
 import org.sunbird.response.Response;
 import org.sunbird.service.GroupService;
-import org.sunbird.service.impl.GroupServiceImpl;
+import org.sunbird.service.GroupServiceImpl;
 import org.sunbird.util.JsonKey;
 
 @ActorConfig(
@@ -18,7 +18,7 @@ import org.sunbird.util.JsonKey;
   asyncTasks = {}
 )
 public class SearchGroupActor extends BaseActor {
-  private GroupService groupService = GroupServiceImpl.getInstance();
+  private GroupService groupService = new GroupServiceImpl();
 
   @Override
   public void onReceive(Request request) throws Throwable {

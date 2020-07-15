@@ -5,22 +5,22 @@ import java.util.Map;
 import org.sunbird.exception.BaseException;
 import org.sunbird.models.Group;
 import org.sunbird.models.GroupResponse;
+import org.sunbird.models.MemberResponse;
 import org.sunbird.response.Response;
 
 public interface GroupService {
 
   String createGroup(Group groupObj) throws BaseException;
 
-  // TODO return group object
-  Map<String, Object> readGroup(String groupId, List<String> fields) throws Exception;
-  // TODO
-  // readGroupMembers
-  // readGroupActivities
-  // readGroup without fields
+  GroupResponse readGroup(String groupId) throws Exception;
+
+  List<MemberResponse> readGroupMembers(String groupId) throws Exception;
 
   List<GroupResponse> searchGroup(Map<String, Object> searchFilter) throws BaseException;
 
   Response updateGroup(Group groupObj) throws BaseException;
+
+  void readGroupActivities(Map<String, Object> dbResGroup);
 
   List<Map<String, Object>> handleActivityOperations(
       String groupId, Map<String, Object> activityOperationMap) throws BaseException;

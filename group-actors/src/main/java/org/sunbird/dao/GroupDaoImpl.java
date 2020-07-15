@@ -1,4 +1,4 @@
-package org.sunbird.dao.impl;
+package org.sunbird.dao;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.sunbird.cassandra.CassandraOperation;
-import org.sunbird.dao.GroupDao;
 import org.sunbird.exception.BaseException;
 import org.sunbird.helper.ServiceFactory;
 import org.sunbird.models.Group;
@@ -71,9 +70,6 @@ public class GroupDaoImpl implements GroupDao {
 
   @Override
   public Response updateGroup(Group groupObj) throws BaseException {
-    // TODO delete the cache if any group is updated
-    //
-    // RedisCache.delete(JavaConverters.asScalaIteratorConverter(Arrays.asList(groupObj.getId()).iterator()).asScala().toSeq());
     Map<String, Object> map = mapper.convertValue(groupObj, Map.class);
     map.put(JsonKey.UPDATED_ON, new Timestamp(Calendar.getInstance().getTime().getTime()));
     Response responseObj =

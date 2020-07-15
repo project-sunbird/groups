@@ -141,7 +141,7 @@ public class UpdateGroupActorTest extends BaseActorTest {
     activitiesOperations.put("remove", removeActivities);
     reqObj.getRequest().put(JsonKey.ACTIVITIES, activitiesOperations);
     reqObj.getRequest().put(JsonKey.MEMBERS, memberOpearations);
-    reqObj.getRequest().put(JsonKey.ID, "group1");
+    reqObj.getRequest().put(JsonKey.GROUP_ID, "group1");
     return reqObj;
   }
 }

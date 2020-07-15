@@ -1,10 +1,10 @@
-package org.sunbird.service.impl;
+package org.sunbird.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -15,7 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sunbird.dao.GroupDao;
-import org.sunbird.dao.impl.GroupDaoImpl;
+import org.sunbird.dao.GroupDaoImpl;
 import org.sunbird.exception.BaseException;
 import org.sunbird.exception.ValidationException;
 import org.sunbird.message.IResponseMessage;
@@ -24,11 +24,10 @@ import org.sunbird.models.Group;
 import org.sunbird.models.GroupResponse;
 import org.sunbird.models.MemberResponse;
 import org.sunbird.response.Response;
-import org.sunbird.service.GroupService;
-import org.sunbird.service.MemberService;
 import org.sunbird.util.ActivityConfigReader;
 import org.sunbird.util.GroupUtil;
 import org.sunbird.util.JsonKey;
+import org.sunbird.util.JsonUtils;
 import org.sunbird.util.SearchServiceUtil;
 
 public class GroupServiceImpl implements GroupService {
@@ -39,73 +38,58 @@ public class GroupServiceImpl implements GroupService {
   private static MemberService memberService = MemberServiceImpl.getInstance();
   private static ObjectMapper objectMapper = new ObjectMapper();
 
-  public static GroupService getInstance() {
-    if (groupService == null) {
-      groupService = new GroupServiceImpl();
-    }
-    return groupService;
-  }
-
   @Override
   public String createGroup(Group groupObj) throws BaseException {
     String groupId = groupDao.createGroup(groupObj);
     return groupId;
   }
 
-  @Override
-  public Map<String, Object> readGroup(String groupId, List<String> fields) throws Exception {
-    Map<String, Object> dbResGroup = new HashMap<>();
+  public GroupResponse readGroup(String groupId) throws Exception {
+    Map<String, Object> dbResGroup;
     Response responseObj = groupDao.readGroup(groupId);
     if (null != responseObj && null != responseObj.getResult()) {
       List<Map<String, Object>> dbGroupDetails =
           (List<Map<String, Object>>) responseObj.getResult().get(JsonKey.RESPONSE);
-
-      if (null != dbGroupDetails
-          && !dbGroupDetails.isEmpty()
+      if (CollectionUtils.isNotEmpty(dbGroupDetails)
           && JsonKey.ACTIVE.equals(dbGroupDetails.get(0).get(JsonKey.STATUS))) {
-
         dbResGroup = dbGroupDetails.get(0);
         // update createdOn, updatedOn format to utc "yyyy-MM-dd HH:mm:ss:SSSZ
-
         dbResGroup.put(
             JsonKey.CREATED_ON,
             dbResGroup.get(JsonKey.CREATED_ON) != null
-                ? GroupUtil.convertDateToUTC(dbResGroup.get(JsonKey.CREATED_ON))
+                ? GroupUtil.convertDateToUTC((Date) dbResGroup.get(JsonKey.CREATED_ON))
                 : dbResGroup.get(JsonKey.CREATED_ON));
 
         dbResGroup.put(
             JsonKey.UPDATED_ON,
             dbResGroup.get(JsonKey.UPDATED_ON) != null
-                ? GroupUtil.convertDateToUTC(dbResGroup.get(JsonKey.UPDATED_ON))
+                ? GroupUtil.convertDateToUTC((Date) dbResGroup.get(JsonKey.UPDATED_ON))
                 : dbResGroup.get(JsonKey.UPDATED_ON));
-
-        if (CollectionUtils.isNotEmpty(fields)) {
-          if (fields.contains(JsonKey.MEMBERS)) {
-            List<MemberResponse> members =
-                memberService.fetchMembersByGroupIds(Lists.newArrayList(groupId), null);
-            dbResGroup.put(JsonKey.MEMBERS, members);
-          }
-          if (fields.contains(JsonKey.ACTIVITIES)) {
-            List<Map<String, Object>> dbResActivities =
-                (List<Map<String, Object>>) dbResGroup.get(JsonKey.ACTIVITIES);
-            if (dbResActivities != null && !dbResActivities.isEmpty()) {
-              addActivityInfoDetails(dbResActivities);
-            }
-          } else {
-            removeActivities(dbResGroup);
-          }
-        } else {
-          removeActivities(dbResGroup);
-        }
+        readGroupActivities(dbResGroup);
+        return JsonUtils.convert(dbResGroup, GroupResponse.class);
       } else {
         throw new ValidationException.GroupNotFound(groupId);
       }
+    } else {
+      throw new ValidationException.GroupNotFound(groupId);
     }
-    return dbResGroup;
   }
 
-  private Object removeActivities(Map<String, Object> dbResGroup) {
-    return dbResGroup.remove(JsonKey.ACTIVITIES);
+  @Override
+  public void readGroupActivities(Map<String, Object> dbResGroup) {
+    List<Map<String, Object>> dbResActivities =
+        (List<Map<String, Object>>) dbResGroup.get(JsonKey.ACTIVITIES);
+    if (dbResActivities != null && !dbResActivities.isEmpty()) {
+      addActivityInfoDetails(dbResActivities);
+    }
+  }
+
+  @Override
+  public List<MemberResponse> readGroupMembers(String groupId) throws Exception {
+
+    List<MemberResponse> members =
+        memberService.fetchMembersByGroupIds(Lists.newArrayList(groupId), null);
+    return members;
   }
 
   /**

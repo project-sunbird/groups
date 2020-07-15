@@ -58,7 +58,7 @@ public class ReadGroupActorTest extends BaseActorTest {
     when(ServiceFactory.getInstance()).thenReturn(cassandraOperation);
   }
 
-  /*@Test
+  @Test
   public void readGroupWithMembers() {
     TestKit probe = new TestKit(system);
     ActorRef subject = system.actorOf(props);
@@ -86,7 +86,7 @@ public class ReadGroupActorTest extends BaseActorTest {
     subject.tell(reqObj, probe.getRef());
     Response res = probe.expectMsgClass(Duration.ofSeconds(10), Response.class);
     Assert.assertTrue(null != res && res.getResponseCode() == 200);
-  }*/
+  }
 
   @Test
   public void readGroupReturnGroupWithActivites() {
@@ -95,7 +95,7 @@ public class ReadGroupActorTest extends BaseActorTest {
     Request reqObj = new Request();
     reqObj.setOperation(ActorOperations.READ_GROUP.getValue());
     reqObj.getRequest().put(JsonKey.GROUP_ID, "groupid1");
-    reqObj.getRequest().put(JsonKey.FIELDS, Arrays.asList("members", "activities"));
+    reqObj.getRequest().put(JsonKey.FIELDS, Arrays.asList("activities"));
 
     try {
       when(cassandraOperation.getRecordById(
@@ -130,59 +130,18 @@ public class ReadGroupActorTest extends BaseActorTest {
         null != activityInfo && !activityInfo.isEmpty() && null != activityInfo.get("identifier"));
   }
 
-  //  @Test
-  //  public void readGroupReturnGroupWithEmptyActivites() {
-  //    TestKit probe = new TestKit(system);
-  //    ActorRef subject = system.actorOf(props);
-  //    Request reqObj = new Request();
-  //    reqObj.setOperation(ActorOperations.READ_GROUP.getValue());
-  //    reqObj.getRequest().put(JsonKey.GROUP_ID, "groupid1");
-  //    reqObj.getRequest().put(JsonKey.FIELDS, Arrays.asList("activities"));
-  //
-  //    try {
-  //      when(cassandraOperation.getRecordById(
-  //              Mockito.anyString(), Mockito.anyString(), Matchers.eq("groupid1")))
-  //          .thenReturn(getGroupsDetailsResponse());
-  //      when(cassandraOperation.getRecordsByProperties(
-  //              Mockito.anyString(),
-  //              Matchers.eq(GROUP_MEMBER_TABLE),
-  //              Mockito.anyMap(),
-  //              Mockito.anyList()))
-  //          .thenReturn(getMemberResponseByGroupIds());
-  //      PowerMockito.mockStatic(HttpClientUtil.class);
-  //      when(HttpClientUtil.post(Mockito.anyString(), Mockito.anyString(), Mockito.anyMap()))
-  //          .thenReturn(getEmptyActivityResponse());
-  //      PowerMockito.mockStatic(ActivityConfigReader.class);
-  //      when(ActivityConfigReader.getServiceUtilClassName(Mockito.anyString()))
-  //          .thenReturn(new ContentSearchUtil());
-  //      when(ActivityConfigReader.getFieldsLists(Mockito.any(SearchServiceUtil.class)))
-  //          .thenReturn(new ArrayList<>());
-  //
-  //    } catch (BaseException ex) {
-  //      Assert.assertTrue(false);
-  //    }
-  //    subject.tell(reqObj, probe.getRef());
-  //    Response res = probe.expectMsgClass(Duration.ofSeconds(1000), Response.class);
-  //    Assert.assertTrue(null != res && res.getResponseCode() == 200);
-  //    List<Map<String, Object>> activities =
-  //        (List<Map<String, Object>>) res.getResult().get(JsonKey.ACTIVITIES);
-  //    Map<String, Object> activityInfo =
-  //        (Map<String, Object>) activities.get(0).get(JsonKey.ACTIVITY_INFO);
-  //    Assert.assertTrue(null == activityInfo);
-  //  }
-
   @Test
-  public void readGroupReturnGroupWithActivityServiceThrowException() {
+  public void readGroupWithMembersActivities() {
     TestKit probe = new TestKit(system);
     ActorRef subject = system.actorOf(props);
     Request reqObj = new Request();
     reqObj.setOperation(ActorOperations.READ_GROUP.getValue());
-    reqObj.getRequest().put(JsonKey.GROUP_ID, "groupid1");
-    reqObj.getRequest().put(JsonKey.FIELDS, Arrays.asList("activities"));
+    reqObj.getRequest().put(JsonKey.GROUP_ID, "TestGroup");
+    reqObj.getRequest().put(JsonKey.FIELDS, Arrays.asList("members", "activities"));
     try {
       when(cassandraOperation.getRecordById(
-              Mockito.anyString(), Mockito.anyString(), Matchers.eq("groupid1")))
-          .thenReturn(getGroupsDetailsResponse());
+              Mockito.anyString(), Mockito.anyString(), Matchers.eq("TestGroup")))
+          .thenReturn(getGroupsDetailsResponseNoActivities());
       when(cassandraOperation.getRecordsByProperties(
               Mockito.anyString(),
               Matchers.eq(GROUP_MEMBER_TABLE),
@@ -191,24 +150,21 @@ public class ReadGroupActorTest extends BaseActorTest {
           .thenReturn(getMemberResponseByGroupIds());
       PowerMockito.mockStatic(HttpClientUtil.class);
       when(HttpClientUtil.post(Mockito.anyString(), Mockito.anyString(), Mockito.anyMap()))
-          .thenReturn("");
+          .thenReturn(getUserServiceResponse());
+      when(HttpClientUtil.post(Mockito.anyString(), Mockito.anyString(), Mockito.anyMap()))
+          .thenReturn(getActivityInfoResponse());
       PowerMockito.mockStatic(ActivityConfigReader.class);
       when(ActivityConfigReader.getServiceUtilClassName(Mockito.anyString()))
           .thenReturn(new ContentSearchUtil());
       when(ActivityConfigReader.getFieldsLists(Mockito.any(SearchServiceUtil.class)))
           .thenReturn(new ArrayList<>());
 
-    } catch (BaseException ex) {
+    } catch (BaseException | JsonProcessingException be) {
       Assert.assertTrue(false);
     }
     subject.tell(reqObj, probe.getRef());
-    Response res = probe.expectMsgClass(Duration.ofSeconds(1000), Response.class);
+    Response res = probe.expectMsgClass(Duration.ofSeconds(10), Response.class);
     Assert.assertTrue(null != res && res.getResponseCode() == 200);
-    List<Map<String, Object>> activities =
-        (List<Map<String, Object>>) res.getResult().get(JsonKey.ACTIVITIES);
-    Map<String, Object> activityInfo =
-        (Map<String, Object>) activities.get(0).get(JsonKey.ACTIVITY_INFO);
-    Assert.assertTrue(null == activityInfo);
   }
 
   private String getActivityInfoResponse() {

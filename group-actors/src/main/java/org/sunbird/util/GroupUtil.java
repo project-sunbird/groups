@@ -1,13 +1,11 @@
 package org.sunbird.util;
 
-import akka.actor.ActorRef;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import org.sunbird.Application;
-import org.sunbird.models.ActorOperations;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.sunbird.models.GroupResponse;
-import org.sunbird.request.Request;
 
 public class GroupUtil {
 
@@ -32,16 +30,10 @@ public class GroupUtil {
     return simpleDateFormat.format(date);
   }
 
-  public static String convertDateToUTC(Object date) throws ParseException {
+  public static String convertDateToUTC(Date date) {
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSSZ");
-    String formattedDate = null;
-    if (date instanceof Date) {
-      simpleDateFormat.setLenient(false);
-      formattedDate = simpleDateFormat.format((Date) date);
-    } else if (date instanceof String) {
-      formattedDate = simpleDateFormat.format(simpleDateFormat.parse((String) date));
-    }
-    return formattedDate;
+    simpleDateFormat.setLenient(false);
+    return simpleDateFormat.format(date);
   }
 
   public static Map<SearchServiceUtil, Map<String, String>> groupActivityIdsBySearchUtilClass(
@@ -62,21 +54,5 @@ public class GroupUtil {
       }
     }
     return idClassTypeMap;
-  }
-
-  /**
-   * to call set cache actor
-   *
-   * @param key
-   * @param value
-   */
-  public static void setCache(String key, String value) {
-    Request req = new Request();
-    req.setOperation(ActorOperations.SET_CACHE.getValue());
-    req.getRequest().put(JsonKey.KEY, key);
-    req.getRequest().put(JsonKey.VALUE, value);
-    Application.getInstance()
-        .getActorRef(ActorOperations.SET_CACHE.getValue())
-        .tell(req, ActorRef.noSender());
   }
 }

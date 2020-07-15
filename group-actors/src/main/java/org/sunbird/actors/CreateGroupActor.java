@@ -5,16 +5,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.sunbird.actor.core.ActorConfig;
 import org.sunbird.exception.BaseException;
 import org.sunbird.models.Group;
 import org.sunbird.request.Request;
 import org.sunbird.response.Response;
 import org.sunbird.service.GroupService;
+import org.sunbird.service.GroupServiceImpl;
 import org.sunbird.service.MemberService;
-import org.sunbird.service.impl.GroupServiceImpl;
-import org.sunbird.service.impl.MemberServiceImpl;
+import org.sunbird.service.MemberServiceImpl;
 import org.sunbird.util.GroupRequestHandler;
 import org.sunbird.util.JsonKey;
 
@@ -24,7 +23,7 @@ import org.sunbird.util.JsonKey;
 )
 public class CreateGroupActor extends BaseActor {
 
-  private GroupService groupService = GroupServiceImpl.getInstance();
+  private GroupService groupService = new GroupServiceImpl();
   private MemberService memberService = MemberServiceImpl.getInstance();
 
   @Override
@@ -64,7 +63,9 @@ public class CreateGroupActor extends BaseActor {
     if (CollectionUtils.isNotEmpty(reqMemberList)) {
       memberList.addAll(reqMemberList);
     }
-    Response addMembersRes = memberService.handleMemberAddition(memberList, groupId, requestHandler.getRequestedBy(actorMessage));
+    Response addMembersRes =
+        memberService.handleMemberAddition(
+            memberList, groupId, requestHandler.getRequestedBy(actorMessage));
     logger.info("Adding members to the group ended : {}", addMembersRes.getResult());
 
     Response response = new Response();

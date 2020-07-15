@@ -15,7 +15,7 @@ public interface MemberService {
 
   Response removeMembers(List<Member> member) throws BaseException;
 
-  public void handleMemberOperations(Map memberOperationMap, String groupId, String contextUserId)
+  void handleMemberOperations(Map memberOperationMap, String groupId, String contextUserId)
       throws BaseException;
 
   Response handleMemberAddition(
@@ -23,7 +23,7 @@ public interface MemberService {
       throws BaseException;
 
   List<MemberResponse> fetchMembersByGroupIds(List<String> groupIds, List<String> fields)
-      throws Exception;
+      throws BaseException;
 
   Map<String, String> fetchGroupRoleByUser(List<String> groupIds, String userId)
       throws BaseException;
