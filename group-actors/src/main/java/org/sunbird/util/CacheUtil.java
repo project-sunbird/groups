@@ -29,7 +29,7 @@ public class CacheUtil {
 
   Map<String, Object> headerMap = new HashMap<>();
 
-  CacheUtil() {
+  public CacheUtil() {
     List<String> reqIds = new ArrayList<>();
     reqIds.add(MDC.get(JsonKey.REQUEST_MESSAGE_ID));
     headerMap.put(JsonKey.REQUEST_MESSAGE_ID, reqIds);
