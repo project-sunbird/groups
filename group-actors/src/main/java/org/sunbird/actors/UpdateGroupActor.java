@@ -19,11 +19,10 @@ import org.sunbird.util.JsonKey;
 
 @ActorConfig(
   tasks = {"updateGroup"},
-  asyncTasks = {}
+  asyncTasks = {},
+  dispatcher = "group-dispatcher"
 )
 public class UpdateGroupActor extends BaseActor {
-  private GroupService groupService = new GroupServiceImpl();
-  private MemberService memberService = MemberServiceImpl.getInstance();
   private CacheUtil cacheUtil = new CacheUtil();
 
   @Override
@@ -44,6 +43,8 @@ public class UpdateGroupActor extends BaseActor {
    */
   private void updateGroup(Request actorMessage) throws BaseException {
     logger.info("UpdateGroup method call");
+    GroupService groupService = new GroupServiceImpl();
+    MemberService memberService = new MemberServiceImpl();
 
     GroupRequestHandler requestHandler = new GroupRequestHandler();
     Group group = requestHandler.handleUpdateGroupRequest(actorMessage);

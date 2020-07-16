@@ -19,12 +19,10 @@ import org.sunbird.util.JsonKey;
 
 @ActorConfig(
   tasks = {"createGroup"},
-  asyncTasks = {}
+  asyncTasks = {},
+  dispatcher = "group-dispatcher"
 )
 public class CreateGroupActor extends BaseActor {
-
-  private GroupService groupService = new GroupServiceImpl();
-  private MemberService memberService = MemberServiceImpl.getInstance();
 
   @Override
   public void onReceive(Request request) throws Throwable {
@@ -44,6 +42,8 @@ public class CreateGroupActor extends BaseActor {
    */
   private void createGroup(Request actorMessage) throws BaseException {
     logger.info("CreateGroup method call");
+    GroupService groupService = new GroupServiceImpl();
+    MemberService memberService = new MemberServiceImpl();
 
     GroupRequestHandler requestHandler = new GroupRequestHandler();
     Group group = requestHandler.handleCreateGroupRequest(actorMessage);

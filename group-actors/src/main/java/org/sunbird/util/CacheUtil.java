@@ -3,9 +3,14 @@ package org.sunbird.util;
 import akka.actor.ActorRef;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.sunbird.Application;
 import org.sunbird.exception.BaseException;
 import org.sunbird.message.ResponseCode;
@@ -22,14 +27,22 @@ public class CacheUtil {
 
   private Timeout timeout = new Timeout(Duration.create(10, TimeUnit.SECONDS));
 
+  Map<String, Object> headerMap = new HashMap<>();
+
+  CacheUtil() {
+    List<String> reqIds = new ArrayList<>();
+    reqIds.add(MDC.get(JsonKey.REQUEST_MESSAGE_ID));
+    headerMap.put(JsonKey.REQUEST_MESSAGE_ID, reqIds);
+  }
   /**
    * to call set cache
    *
    * @param key
    * @param value
    */
-  public void setCache(String key, String value, ActorRef ref) {
+  public void setCache(String key, String value) {
     Request req = new Request();
+    req.setHeaders(headerMap);
     req.setOperation(ActorOperations.SET_CACHE.getValue());
     req.getRequest().put(JsonKey.KEY, key);
     req.getRequest().put(JsonKey.VALUE, value);
@@ -48,6 +61,7 @@ public class CacheUtil {
     Request req = new Request();
     req.setOperation(ActorOperations.GET_CACHE.getValue());
     req.getRequest().put(JsonKey.KEY, key);
+    req.setHeaders(headerMap);
     try {
       Object object =
           getResponse(
@@ -104,6 +118,7 @@ public class CacheUtil {
     Request req = new Request();
     req.setOperation(ActorOperations.DEL_CACHE.getValue());
     req.getRequest().put(JsonKey.KEY, key);
+    req.setHeaders(headerMap);
     Application.getInstance()
         .getActorRef(ActorOperations.DEL_CACHE.getValue())
         .tell(req, ActorRef.noSender());

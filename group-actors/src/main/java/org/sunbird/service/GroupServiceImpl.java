@@ -34,8 +34,7 @@ public class GroupServiceImpl implements GroupService {
   private static Logger logger = LoggerFactory.getLogger(GroupServiceImpl.class);
 
   private static GroupDao groupDao = GroupDaoImpl.getInstance();
-  private static GroupService groupService = null;
-  private static MemberService memberService = MemberServiceImpl.getInstance();
+  private static MemberService memberService = new MemberServiceImpl();
   private static ObjectMapper objectMapper = new ObjectMapper();
 
   @Override

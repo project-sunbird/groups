@@ -12,7 +12,7 @@ import scala.collection.JavaConverters;
 
 @ActorConfig(
   tasks = {"getCache", "setCache", "delCache"},
-  dispatcher = "",
+  dispatcher = "group-dispatcher",
   asyncTasks = {}
 )
 public class CacheActor extends BaseActor {
@@ -34,17 +34,20 @@ public class CacheActor extends BaseActor {
         break;
       case "delCache":
         delCache(request);
+        break;
       default:
         onReceiveUnsupportedMessage("CacheActor");
     }
   }
 
   private void setCache(Request request) {
+    logger.info("setCache method call {}", request.get(JsonKey.KEY));
     Map<String, Object> req = request.getRequest();
     RedisCache.set((String) req.get(JsonKey.KEY), (String) req.get(JsonKey.VALUE), ttl);
   }
 
   private void getCache(Request request) {
+    logger.info("getCache method call {}", request.get(JsonKey.KEY));
     Map<String, Object> req = request.getRequest();
     String value = RedisCache.get((String) req.get(JsonKey.KEY), null, 0);
     Response response = new Response();
@@ -53,6 +56,7 @@ public class CacheActor extends BaseActor {
   }
 
   private void delCache(Request request) {
+    logger.info("delCache method call {}", request.get(JsonKey.KEY));
     Map<String, Object> req = request.getRequest();
     RedisCache.delete(
         JavaConverters.asScalaIteratorConverter(

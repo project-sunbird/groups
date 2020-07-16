@@ -16,12 +16,10 @@ import org.sunbird.util.JsonUtils;
 
 @ActorConfig(
   tasks = {"readGroup"},
-  asyncTasks = {}
+  asyncTasks = {},
+  dispatcher = "group-dispatcher"
 )
 public class ReadGroupActor extends BaseActor {
-
-  private GroupService groupService = new GroupServiceImpl();
-  private CacheUtil cacheUtil = new CacheUtil();
 
   @Override
   public void onReceive(Request request) throws Throwable {
@@ -41,6 +39,8 @@ public class ReadGroupActor extends BaseActor {
    */
   private void readGroup(Request actorMessage) throws Exception {
     logger.info("ReadGroup method call");
+    CacheUtil cacheUtil = new CacheUtil();
+    GroupService groupService = new GroupServiceImpl();
     String groupId = (String) actorMessage.getRequest().get(JsonKey.GROUP_ID);
     List<String> requestFields = (List<String>) actorMessage.getRequest().get(JsonKey.FIELDS);
     GroupResponse groupResponse;
@@ -49,17 +49,16 @@ public class ReadGroupActor extends BaseActor {
       groupResponse = JsonUtils.deserialize(groupInfo, GroupResponse.class);
     } else {
       groupResponse = groupService.readGroup(groupId);
-      cacheUtil.setCache(groupId, JsonUtils.serialize(groupResponse), self());
+      cacheUtil.setCache(groupId, JsonUtils.serialize(groupResponse));
     }
     if (requestFields.contains(JsonKey.MEMBERS)) {
-      String groupMember = cacheUtil.getCache(groupId + "_" + JsonKey.MEMBERS);
+      String groupMember = cacheUtil.getCache(constructRedisIdentifier(groupId));
       List<MemberResponse> memberResponses = new ArrayList<>();
       if (StringUtils.isNotEmpty(groupMember)) {
         memberResponses = JsonUtils.deserialize(groupMember, memberResponses.getClass());
       } else {
         memberResponses = groupService.readGroupMembers(groupId);
-        cacheUtil.setCache(
-            groupId + "_" + JsonKey.MEMBERS, JsonUtils.serialize(memberResponses), self());
+        cacheUtil.setCache(constructRedisIdentifier(groupId), JsonUtils.serialize(memberResponses));
       }
       groupResponse.setMembers(memberResponses);
     }
@@ -70,5 +69,15 @@ public class ReadGroupActor extends BaseActor {
     Map<String, Object> map = JsonUtils.convert(groupResponse, Map.class);
     response.putAll(map);
     sender().tell(response, self());
+  }
+
+  /**
+   * constructs redis identifie for group & members info groupId_members
+   *
+   * @param groupId
+   * @return
+   */
+  private String constructRedisIdentifier(String groupId) {
+    return groupId + "_" + JsonKey.MEMBERS;
   }
 }

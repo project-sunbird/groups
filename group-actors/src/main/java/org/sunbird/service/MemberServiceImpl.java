@@ -28,13 +28,6 @@ public class MemberServiceImpl implements MemberService {
   private static ObjectMapper objectMapper = new ObjectMapper();
   private static UserService userService = UserServiceImpl.getInstance();
 
-  public static MemberService getInstance() {
-    if (memberService == null) {
-      memberService = new MemberServiceImpl();
-    }
-    return memberService;
-  }
-
   @Override
   public Response addMembers(List<Member> member) throws BaseException {
     Response response = memberDao.addMembers(member);
