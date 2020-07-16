@@ -4,15 +4,29 @@
   "serviceClass": "org.sunbird.util.ContentSearchUtil",
   "fields": [
     "identifier",
-    "contentType",
-    "objectType",
+    "pkgVersion",
     "name",
-    "organisation",
-    "language",
-    "appIcon",
+    "appIco",
+    "subject",
+    "medium",
+    "board",
+    "framework",
+    "gradeLevel",
+    "channel",
+    "contentType",
     "mimeType",
-    "topic",
-    "resourceType"
+    "resourceType",
+    "status",
+    "downloadUrl",
+    "variants",
+    "createdBy",
+    "originData",
+    "origin",
+    "streamingUrl",
+    "dialecodes",
+    "size",
+    "batches",
+    "organisation"
   ]
   }]
 }

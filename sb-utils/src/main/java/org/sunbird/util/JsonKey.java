@@ -96,6 +96,8 @@ public interface JsonKey {
   String UPDATED_ON = "updatedOn";
   String USER_SERVICE_BASE_URL = "LEARNER_SERVICE_PORT";
   String USER_SERVICE_SEARCH_URL = "sunbird_user_service_search_url";
+  String USER_SERVICE_SYSTEM_SETTING_URL = "sunbird_us_system_setting_url";
+  String USER_SERVICE_ORG_READ_URL = "sunbird_us_org_read_url";
   String SUNBIRD_CS_BASE_URL = "CONTENT_SERVICE_PORT";
   String SUNBIRD_CS_SEARCH_URL = "sunbird_cs_search_url";
   String CONTENT = "content";
@@ -114,4 +116,26 @@ public interface JsonKey {
   String CONTENT_TYPE = "contentType";
   String FIRSTNAME = "firstName";
   String LASTNAME = "lastName";
+  String ENV = "env";
+  String REQUEST_TYPE = "requestType";
+  Object API_CALL = "API_CALL";
+  String USER = "user";
+  String ACTOR_TYPE = "actorType";
+  String ROOT_ORG_ID = "rootOrgId";
+  String ROLLUP = "rollup";
+  String APP_ID = "appId";
+  String DEVICE_ID = "deviceId";
+  String ACTOR_ID = "actorId";
+  String DEFAULT_CONSUMER_ID = "internal";
+  String CONSUMER = "consumer";
+  String ADDITIONAL_INFO = "ADDITIONAL_INFO";
+  String UPDATE = "update";
+  String CREATE = "create";
+  String REQUEST_SOURCE = "source";
+  String CHANNEL = "channel";
+  String FIELD = "field";
+  String VALUE = "value";
+  String CUSTODIAN_ORG_ID = "custodianOrgId";
+  String ORGANISATION_ID = "organisationId";
+  String HASH_TAG_ID = "hashTagId";
 }

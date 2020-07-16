@@ -2,8 +2,7 @@ package utils.module;
 
 import akka.stream.Materializer;
 import com.google.inject.Inject;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 import org.slf4j.Logger;
@@ -31,7 +30,6 @@ public class RequestIdAddFilter extends Filter {
     String reqId =
         requestIdHeader.isPresent() ? requestIdHeader.get() : UUID.randomUUID().toString();
     requestHeader.getHeaders().addHeader(JsonKey.REQUEST_MESSAGE_ID, reqId);
-
     return nextFilter.apply(requestHeader);
   }
 }

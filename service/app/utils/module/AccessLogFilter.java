@@ -3,9 +3,7 @@ package utils.module;
 import akka.util.ByteString;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.*;
 import java.util.concurrent.Executor;
 import javax.inject.Inject;
 import org.slf4j.Logger;
@@ -50,8 +48,7 @@ public class AccessLogFilter extends EssentialFilter {
                   params.put(JsonKey.DURATION, requestTime);
                   params.put(JsonKey.STATUS, result.status());
                   params.put(JsonKey.LOG_LEVEL, JsonKey.INFO);
-                  String contextDetails =
-                      "{\"context\":{\"env\":\"dev\",\"channel\":\"sdadasdad\",\"actorId\":\"Anonymous\",\"actorType\":\"user\"}}";
+                  String contextDetails = request.flash().get(JsonKey.CONTEXT);
                   Map<String, Object> context =
                       objectMapper.readValue(
                           contextDetails, new TypeReference<Map<String, Object>>() {});
