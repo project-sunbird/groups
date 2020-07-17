@@ -153,7 +153,7 @@ public class GroupServiceImpl implements GroupService {
   }
 
   /**
-   * Get all groupsIds By userIds
+   * Get all groupsIds By userIds fghjkl;
    *
    * @param userId
    * @return groupIdsList

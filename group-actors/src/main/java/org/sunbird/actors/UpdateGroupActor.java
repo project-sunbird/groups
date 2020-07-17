@@ -42,12 +42,12 @@ public class UpdateGroupActor extends BaseActor {
    * @param actorMessage
    */
   private void updateGroup(Request actorMessage) throws BaseException {
-    logger.info("UpdateGroup method call");
     GroupService groupService = new GroupServiceImpl();
     MemberService memberService = new MemberServiceImpl();
 
     GroupRequestHandler requestHandler = new GroupRequestHandler();
     Group group = requestHandler.handleUpdateGroupRequest(actorMessage);
+    logger.info("Update group for the groupId {}", group.getId());
 
     // member operations to group
     Map memberOperationMap = (Map) actorMessage.getRequest().get(JsonKey.MEMBERS);

@@ -39,9 +39,9 @@ public class SearchGroupActor extends BaseActor {
    * @param request
    */
   private void searchGroup(Request request) throws BaseException {
-    logger.info("SearchGroup method call");
     GroupService groupService = new GroupServiceImpl();
     Map<String, Object> searchQueryMap = request.getRequest();
+    logger.info("search group with the request/filters {}", searchQueryMap);
     Map<String, Object> filterMap = (Map<String, Object>) searchQueryMap.get(JsonKey.FILTERS);
     List<GroupResponse> groupDetails = groupService.searchGroup(filterMap);
     Map<String, Object> result = new HashMap<>();

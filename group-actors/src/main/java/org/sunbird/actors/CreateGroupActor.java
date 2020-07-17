@@ -41,7 +41,6 @@ public class CreateGroupActor extends BaseActor {
    * @param actorMessage
    */
   private void createGroup(Request actorMessage) throws BaseException {
-    logger.info("CreateGroup method call");
     GroupService groupService = new GroupServiceImpl();
     MemberService memberService = new MemberServiceImpl();
 
@@ -59,17 +58,20 @@ public class CreateGroupActor extends BaseActor {
     // adding members to group, if members are provided in request
     List<Map<String, Object>> reqMemberList =
         (List<Map<String, Object>>) actorMessage.getRequest().get(JsonKey.MEMBERS);
-    logger.info("Adding members to the group: {} started", group.getName());
+    logger.info("Adding members to the group: {} groupId started", group.getName());
     if (CollectionUtils.isNotEmpty(reqMemberList)) {
       memberList.addAll(reqMemberList);
     }
     Response addMembersRes =
         memberService.handleMemberAddition(
             memberList, groupId, requestHandler.getRequestedBy(actorMessage));
-    logger.info("Adding members to the group ended : {}", addMembersRes.getResult());
-
+    logger.info(
+        "Adding members to the group : {} ended , response {}",
+        group.getName(),
+        addMembersRes.getResult());
     Response response = new Response();
     response.put(JsonKey.GROUP_ID, groupId);
+    logger.info("group created successfully with groupId {}", groupId);
     sender().tell(response, self());
   }
 }

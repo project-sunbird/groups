@@ -12,8 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.sunbird.Application;
-import org.sunbird.exception.BaseException;
-import org.sunbird.message.ResponseCode;
 import org.sunbird.models.ActorOperations;
 import org.sunbird.request.Request;
 import org.sunbird.response.Response;
@@ -70,17 +68,10 @@ public class CacheUtil {
         Response response = (Response) object;
         value = (String) response.get(JsonKey.VALUE);
       } else if (object instanceof Exception) {
-        throw new BaseException(
-            ResponseCode.SERVER_ERROR.getErrorCode(),
-            ResponseCode.SERVER_ERROR.getErrorMessage(),
-            ResponseCode.SERVER_ERROR.getResponseCode());
+        logger.error("getCache: Exception occurred with error message =  {}", object);
       }
     } catch (Exception e) {
       logger.error("getCache: Exception occurred with error message =  {}", e.getMessage());
-      throw new BaseException(
-          ResponseCode.unableToCommunicateWithActor.getErrorCode(),
-          ResponseCode.unableToCommunicateWithActor.getErrorMessage(),
-          ResponseCode.SERVER_ERROR.getResponseCode());
     }
     return value;
   }
@@ -90,23 +81,12 @@ public class CacheUtil {
       return Await.result(getFuture(actorRef, request), timeout.duration());
     } catch (Exception e) {
       logger.error("getResponse: Exception occurred with error message =  {}", e.getMessage());
-      throw new BaseException(
-          ResponseCode.unableToCommunicateWithActor.getErrorCode(),
-          ResponseCode.unableToCommunicateWithActor.getErrorMessage(),
-          ResponseCode.SERVER_ERROR.getResponseCode());
     }
+    return null;
   }
 
   private Future<Object> getFuture(ActorRef actorRef, Request request) {
-    try {
-      return Patterns.ask(actorRef, request, timeout);
-    } catch (Exception e) {
-      logger.error("getFuture: Exception occurred with error message =  {}", e.getMessage());
-      throw new BaseException(
-          ResponseCode.unableToCommunicateWithActor.getErrorCode(),
-          ResponseCode.unableToCommunicateWithActor.getErrorMessage(),
-          ResponseCode.SERVER_ERROR.getResponseCode());
-    }
+    return Patterns.ask(actorRef, request, timeout);
   }
 
   /**

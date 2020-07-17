@@ -23,7 +23,6 @@ import org.sunbird.util.JsonKey;
 public class MemberServiceImpl implements MemberService {
 
   private static MemberDao memberDao = MemberDaoImpl.getInstance();
-  private static MemberService memberService = null;
   private static Logger logger = LoggerFactory.getLogger(MemberServiceImpl.class);
   private static ObjectMapper objectMapper = new ObjectMapper();
   private static UserService userService = UserServiceImpl.getInstance();
@@ -85,7 +84,7 @@ public class MemberServiceImpl implements MemberService {
   public Response handleMemberAddition(
       List<Map<String, Object>> memberList, String groupId, String contextUserId)
       throws BaseException {
-    logger.info("Number of members to be added are: {}", memberList.size());
+    logger.info("Number of members to be added to the group {} are {}", groupId, memberList.size());
     Response addMemberRes = new Response();
     List<Member> members =
         memberList

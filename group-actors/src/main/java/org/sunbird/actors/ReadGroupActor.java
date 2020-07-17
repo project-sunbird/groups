@@ -40,11 +40,11 @@ public class ReadGroupActor extends BaseActor {
    * @param actorMessage
    */
   private void readGroup(Request actorMessage) throws Exception {
-    logger.info("ReadGroup method call");
     CacheUtil cacheUtil = new CacheUtil();
     GroupService groupService = new GroupServiceImpl();
     String groupId = (String) actorMessage.getRequest().get(JsonKey.GROUP_ID);
     List<String> requestFields = (List<String>) actorMessage.getRequest().get(JsonKey.FIELDS);
+    logger.info("Reading group with groupId {} and required fields {}", groupId, requestFields);
     GroupResponse groupResponse;
     String groupInfo = cacheUtil.getCache(groupId);
     if (StringUtils.isNotEmpty(groupInfo)) {
