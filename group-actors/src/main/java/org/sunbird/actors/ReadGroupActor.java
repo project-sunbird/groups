@@ -3,6 +3,7 @@ package org.sunbird.actors;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.sunbird.actor.core.ActorConfig;
 import org.sunbird.message.ResponseCode;
@@ -53,7 +54,7 @@ public class ReadGroupActor extends BaseActor {
       groupResponse = groupService.readGroup(groupId);
       cacheUtil.setCache(groupId, JsonUtils.serialize(groupResponse));
     }
-    if (requestFields.contains(JsonKey.MEMBERS)) {
+    if (CollectionUtils.isNotEmpty(requestFields) && requestFields.contains(JsonKey.MEMBERS)) {
       String groupMember = cacheUtil.getCache(constructRedisIdentifier(groupId));
       List<MemberResponse> memberResponses = new ArrayList<>();
       if (StringUtils.isNotEmpty(groupMember)) {
@@ -64,7 +65,7 @@ public class ReadGroupActor extends BaseActor {
       }
       groupResponse.setMembers(memberResponses);
     }
-    if (!requestFields.contains(JsonKey.ACTIVITIES)) {
+    if (CollectionUtils.isNotEmpty(requestFields) && !requestFields.contains(JsonKey.ACTIVITIES)) {
       groupResponse.setActivities(null);
     }
     Response response = new Response(ResponseCode.OK.getCode());

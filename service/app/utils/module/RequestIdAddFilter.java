@@ -26,8 +26,7 @@ public class RequestIdAddFilter extends Filter {
   public CompletionStage<Result> apply(
       Function<Http.RequestHeader, CompletionStage<Result>> nextFilter,
       Http.RequestHeader requestHeader) {
-    long startTime = System.currentTimeMillis();
-
+    MDC.clear();
     Optional<String> requestIdHeader = requestHeader.getHeaders().get(JsonKey.REQUEST_MESSAGE_ID);
     String reqId =
         requestIdHeader.isPresent() ? requestIdHeader.get() : UUID.randomUUID().toString();
