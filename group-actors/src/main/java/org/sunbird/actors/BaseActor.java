@@ -43,7 +43,7 @@ public abstract class BaseActor extends UntypedAbstractActor {
         onReceive(request);
         endTrace(operation);
       } catch (Exception e) {
-        logger.error("{} : exception occurred: {} {}", operation, e.getMessage(), e);
+        logger.error("{} exception occurred {} {}", operation, e.getMessage(), e);
         onReceiveException(operation, e);
       } finally {
         logger.clearMDC();

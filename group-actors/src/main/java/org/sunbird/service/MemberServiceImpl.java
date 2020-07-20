@@ -64,6 +64,8 @@ public class MemberServiceImpl implements MemberService {
               .map(data -> getMemberModelForEdit(data, groupId, contextUserId))
               .collect(Collectors.toList());
       if (!editMembers.isEmpty()) {
+        logger.info(
+            "Number of members to be modified in the group {} are {}", groupId, editMembers.size());
         Response editMemberRes = editMembers(editMembers);
       }
     }
@@ -75,6 +77,10 @@ public class MemberServiceImpl implements MemberService {
               .map(data -> getMemberModelForRemove(data, groupId, contextUserId))
               .collect(Collectors.toList());
       if (!removeMembers.isEmpty()) {
+        logger.info(
+            "Number of members to be modified in the group {} are {}",
+            groupId,
+            removeMembers.size());
         Response removeMemberRes = removeMembers(removeMembers);
       }
     }
