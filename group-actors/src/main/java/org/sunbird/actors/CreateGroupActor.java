@@ -61,7 +61,7 @@ public class CreateGroupActor extends BaseActor {
     // adding members to group, if members are provided in request
     List<Map<String, Object>> reqMemberList =
         (List<Map<String, Object>>) actorMessage.getRequest().get(JsonKey.MEMBERS);
-    logger.info("Adding members to the group: {} groupId started", groupId);
+    logger.info("Adding members to the group: {} started", groupId);
     if (CollectionUtils.isNotEmpty(reqMemberList)) {
       memberList.addAll(reqMemberList);
     }

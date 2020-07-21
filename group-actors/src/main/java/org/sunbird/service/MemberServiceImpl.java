@@ -78,7 +78,7 @@ public class MemberServiceImpl implements MemberService {
               .collect(Collectors.toList());
       if (!removeMembers.isEmpty()) {
         logger.info(
-            "Number of members to be modified in the group {} are {}",
+            "Number of members needs to be removed from the group {} are {}",
             groupId,
             removeMembers.size());
         Response removeMemberRes = removeMembers(removeMembers);
