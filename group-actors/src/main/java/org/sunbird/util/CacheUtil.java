@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -15,6 +16,7 @@ import org.sunbird.Application;
 import org.sunbird.models.ActorOperations;
 import org.sunbird.request.Request;
 import org.sunbird.response.Response;
+import org.sunbird.util.helper.PropertiesCache;
 import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
@@ -27,6 +29,22 @@ public class CacheUtil {
 
   Map<String, Object> headerMap = new HashMap<>();
 
+  public static int groupTtl;
+  public static int userTtl;
+
+  static {
+    groupTtl =
+        StringUtils.isNotEmpty(
+                PropertiesCache.getInstance().getConfigValue(JsonKey.GROUPS_REDIS_TTL))
+            ? Integer.parseInt(
+                PropertiesCache.getInstance().getConfigValue(JsonKey.GROUPS_REDIS_TTL))
+            : 3600000;
+    userTtl =
+        StringUtils.isNotEmpty(PropertiesCache.getInstance().getConfigValue(JsonKey.USER_REDIS_TTL))
+            ? Integer.parseInt(PropertiesCache.getInstance().getConfigValue(JsonKey.USER_REDIS_TTL))
+            : 3600000;
+  }
+
   public CacheUtil() {
     List<String> reqIds = new ArrayList<>();
     reqIds.add(MDC.get(JsonKey.REQUEST_MESSAGE_ID));
@@ -38,12 +56,13 @@ public class CacheUtil {
    * @param key
    * @param value
    */
-  public void setCache(String key, String value) {
+  public void setCache(String key, String value, int ttl) {
     Request req = new Request();
     req.setHeaders(headerMap);
     req.setOperation(ActorOperations.SET_CACHE.getValue());
     req.getRequest().put(JsonKey.KEY, key);
     req.getRequest().put(JsonKey.VALUE, value);
+    req.getRequest().put(JsonKey.TTL, ttl);
     Application.getInstance()
         .getActorRef(ActorOperations.SET_CACHE.getValue())
         .tell(req, ActorRef.noSender());

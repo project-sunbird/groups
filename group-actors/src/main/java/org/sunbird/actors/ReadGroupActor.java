@@ -1,5 +1,6 @@
 package org.sunbird.actors;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -52,16 +53,20 @@ public class ReadGroupActor extends BaseActor {
       groupResponse = JsonUtils.deserialize(groupInfo, GroupResponse.class);
     } else {
       groupResponse = groupService.readGroup(groupId);
-      cacheUtil.setCache(groupId, JsonUtils.serialize(groupResponse));
+      cacheUtil.setCache(groupId, JsonUtils.serialize(groupResponse), CacheUtil.groupTtl);
     }
     if (CollectionUtils.isNotEmpty(requestFields) && requestFields.contains(JsonKey.MEMBERS)) {
       String groupMember = cacheUtil.getCache(constructRedisIdentifier(groupId));
       List<MemberResponse> memberResponses = new ArrayList<>();
       if (StringUtils.isNotEmpty(groupMember)) {
-        memberResponses = JsonUtils.deserialize(groupMember, memberResponses.getClass());
+        memberResponses =
+            JsonUtils.deserialize(groupMember, new TypeReference<List<MemberResponse>>() {});
       } else {
         memberResponses = groupService.readGroupMembers(groupId);
-        cacheUtil.setCache(constructRedisIdentifier(groupId), JsonUtils.serialize(memberResponses));
+        cacheUtil.setCache(
+            constructRedisIdentifier(groupId),
+            JsonUtils.serialize(memberResponses),
+            CacheUtil.groupTtl);
       }
       groupResponse.setMembers(memberResponses);
     }
