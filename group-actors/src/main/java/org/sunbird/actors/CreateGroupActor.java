@@ -65,7 +65,9 @@ public class CreateGroupActor extends BaseActor {
     }
 
     GroupUtil.checkMaxMemberLimit(memberList.size());
-    GroupUtil.checkMaxActivityLimit(group.getActivities().size());
+    if (CollectionUtils.isNotEmpty(group.getActivities())) {
+      GroupUtil.checkMaxActivityLimit(group.getActivities().size());
+    }
     String groupId = groupService.createGroup(group);
 
     if (CollectionUtils.isNotEmpty(memberList)) {
