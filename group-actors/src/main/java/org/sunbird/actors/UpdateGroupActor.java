@@ -84,7 +84,7 @@ public class UpdateGroupActor extends BaseActor {
       validateActivityList(
           group, (Map<String, Object>) actorMessage.getRequest().get(JsonKey.ACTIVITIES));
     }
-
+    boolean deleteFromUserCache = false;
     // Group and activity updates
     if (group != null
         && (StringUtils.isNotEmpty(group.getDescription())
@@ -93,6 +93,9 @@ public class UpdateGroupActor extends BaseActor {
             || StringUtils.isNotEmpty(group.getStatus())
             || CollectionUtils.isNotEmpty(group.getActivities()))) {
       cacheUtil.delCache(group.getId());
+      // if name, description and status update happens in group , delete cache for all the members
+      // belongs to that group
+      deleteFromUserCache = true;
       GroupService groupService = new GroupServiceImpl();
       Response response = groupService.updateGroup(group);
     }
@@ -102,7 +105,8 @@ public class UpdateGroupActor extends BaseActor {
             PropertiesCache.getInstance().getConfigValue(JsonKey.ENABLE_USERID_REDIS_CACHE));
     if (isUseridRedisEnabled) {
       // Remove group list user cache from redis
-      deleteUserCache((Map) actorMessage.getRequest().get(JsonKey.MEMBERS), membersInDB);
+      deleteUserCache(
+          (Map) actorMessage.getRequest().get(JsonKey.MEMBERS), membersInDB, deleteFromUserCache);
     }
 
     Response response = new Response(ResponseCode.OK.getCode());
@@ -156,7 +160,8 @@ public class UpdateGroupActor extends BaseActor {
     return validationErrors;
   }
 
-  private void deleteUserCache(Map memberOperationMap, List<MemberResponse> dbMembers) {
+  private void deleteUserCache(
+      Map memberOperationMap, List<MemberResponse> dbMembers, boolean deleteFromUserCache) {
     if (MapUtils.isNotEmpty(memberOperationMap)) {
       List<Map<String, Object>> memberAddList =
           (List<Map<String, Object>>) memberOperationMap.get(JsonKey.ADD);
@@ -174,7 +179,7 @@ public class UpdateGroupActor extends BaseActor {
         memberRemoveList.forEach(member -> cacheUtil.delCache(member));
       }
     }
-    if (CollectionUtils.isNotEmpty(dbMembers)) {
+    if (CollectionUtils.isNotEmpty(dbMembers) && deleteFromUserCache) {
       dbMembers.forEach(member -> cacheUtil.delCache(member.getUserId()));
     }
   }
