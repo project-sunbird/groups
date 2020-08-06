@@ -49,7 +49,7 @@ public class TelemetryWriter {
       telemetryEventLogger.info(telemetry);
     } else {
       logger.error(
-          "processLogEvent: Audit Telemetry validation failed: {} {} ",
+          "processLogEvent: Log Telemetry validation failed: {} {} ",
           telemetry,
           LoggerEnum.ERROR.name());
     }

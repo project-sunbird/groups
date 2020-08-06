@@ -51,11 +51,14 @@ public class OnRequestHandler implements ActionCreator {
         if (result != null) return result;
 
         Map userAuthentication = RequestInterceptor.verifyRequestData(request);
-        String message = (String)userAuthentication.get(JsonKey.USER_ID);
-        if(userAuthentication.get(JsonKey.MANAGED_FOR) != null) {
-          request = request.addAttr(Attrs.MANAGED_FOR, (String) userAuthentication.get(JsonKey.MANAGED_FOR));
+        String message = (String) userAuthentication.get(JsonKey.USER_ID);
+        if (userAuthentication.get(JsonKey.MANAGED_FOR) != null) {
+          request =
+              request.addAttr(
+                  Attrs.MANAGED_FOR, (String) userAuthentication.get(JsonKey.MANAGED_FOR));
         }
         request = initializeContext(request, message);
+
         if (!JsonKey.USER_UNAUTH_STATES.contains(message)) {
           request = request.addAttr(Attrs.USERID, message);
           result = delegate.call(request);
@@ -158,7 +161,9 @@ public class OnRequestHandler implements ActionCreator {
       }
       Map<String, Object> map = new WeakHashMap<>();
       map.put(JsonKey.CONTEXT, requestContext);
-      return httpReq.addAttr(Attrs.CONTEXT, mapper.writeValueAsString(map));
+      String contextStr = mapper.writeValueAsString(map);
+      httpReq.flash().put(JsonKey.CONTEXT, contextStr);
+      return httpReq.addAttr(Attrs.CONTEXT, contextStr);
     } catch (Exception ex) {
       logger.error("Error process set request context" + ex.getMessage());
       throw new BaseException(
