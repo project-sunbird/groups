@@ -161,9 +161,7 @@ public class OnRequestHandler implements ActionCreator {
       }
       Map<String, Object> map = new WeakHashMap<>();
       map.put(JsonKey.CONTEXT, requestContext);
-      String contextStr = mapper.writeValueAsString(map);
-      httpReq.flash().put(JsonKey.CONTEXT, contextStr);
-      return httpReq.addAttr(Attrs.CONTEXT, contextStr);
+      return httpReq.addAttr(Attrs.CONTEXT, mapper.writeValueAsString(map));
     } catch (Exception ex) {
       logger.error("Error process set request context" + ex.getMessage());
       throw new BaseException(

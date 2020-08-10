@@ -1,9 +1,17 @@
 package controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.WeakHashMap;
 import org.apache.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sunbird.request.Request;
 import org.sunbird.response.Response;
 import org.sunbird.response.ResponseFactory;
+import org.sunbird.telemetry.util.TelemetryEvents;
+import org.sunbird.telemetry.util.TelemetryWriter;
 import org.sunbird.util.JsonKey;
 import play.libs.Json;
 import play.mvc.Http;
@@ -16,6 +24,9 @@ import utils.module.RequestMapper;
  * success and failure to user.
  */
 public class ResponseHandler {
+  private static final Logger logger = LoggerFactory.getLogger(ResponseHandler.class);
+
+  private ObjectMapper objectMapper = new ObjectMapper();
 
   private ResponseHandler() {}
 
@@ -39,6 +50,7 @@ public class ResponseHandler {
         result = Results.internalServerError(Json.toJson(response));
         break;
     }
+    logTelemetry(response, request);
     return result;
   }
   /**
@@ -73,6 +85,44 @@ public class ResponseHandler {
     response.setId(apiId);
     response.setVer(JsonKey.API_VERSION);
     response.setTs(ResponseFactory.getCurrentDate());
+    logTelemetry(response, request);
     return Results.ok(Json.toJson(response));
+  }
+
+  static void logTelemetry(Response response, Request request) {
+    if (!(request.getPath().contains("/health") || request.getPath().contains("/service/health"))) {
+      try {
+        long startTime = Long.parseLong(request.getTs());
+        long endTime = System.currentTimeMillis();
+
+        long requestTime = endTime - startTime;
+        org.sunbird.request.Request req = new org.sunbird.request.Request();
+        Map<String, Object> params = new WeakHashMap<>();
+        params.put(JsonKey.URL, request.getPath());
+        params.put(JsonKey.LOG_TYPE, JsonKey.API_ACCESS);
+        params.put(JsonKey.MESSAGE, "");
+        params.put(JsonKey.METHOD, request.getOperation());
+        params.put(JsonKey.DURATION, requestTime);
+        params.put(JsonKey.STATUS, response.getResponseCode());
+        params.put(JsonKey.LOG_LEVEL, JsonKey.INFO);
+        Map<String, Object> context = null;
+        req.setRequest(
+            generateTelemetryRequestForController(
+                TelemetryEvents.LOG.getName(), params, request.getContext()));
+        TelemetryWriter.write(req);
+      } catch (Exception ex) {
+        logger.info("AccessLogFilter:apply Exception in writing telemetry", ex);
+      }
+    }
+  }
+
+  private static Map<String, Object> generateTelemetryRequestForController(
+      String eventType, Map<String, Object> params, Map<String, Object> context) {
+
+    Map<String, Object> map = new HashMap<>();
+    map.put(JsonKey.TELEMETRY_EVENT_TYPE, eventType);
+    map.put(JsonKey.CONTEXT, context);
+    map.put(JsonKey.PARAMS, params);
+    return map;
   }
 }
