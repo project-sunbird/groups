@@ -71,7 +71,7 @@ public class GroupRequestHandler {
   public void validateAddMembers(
       Map memberOperationMap,
       List<MemberResponse> membersInDB,
-      List<Map<String, String>> errorList) {
+      List<Map<String, String>> memberErrorList) {
     List<Map<String, Object>> memberAddList =
         (List<Map<String, Object>>) memberOperationMap.get(JsonKey.ADD);
     List<Map<String, Object>> newMemberAddList = new ArrayList<Map<String, Object>>();
@@ -90,7 +90,7 @@ public class GroupRequestHandler {
                     Map errorMap = new HashMap<>();
                     errorMap.put(JsonKey.USER_ID, e.get(JsonKey.USER_ID));
                     errorMap.put(JsonKey.ERROR_CODE, JsonKey.MEMBER_EXISTS);
-                    errorList.add(errorMap);
+                    memberErrorList.add(errorMap);
                   } else {
                     // Remove duplicates in new list
                     if (!newMemberAddList

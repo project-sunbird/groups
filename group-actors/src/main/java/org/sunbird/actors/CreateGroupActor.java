@@ -109,6 +109,7 @@ public class CreateGroupActor extends BaseActor {
         cacheUtil.deleteCacheSync(userId);
         deleteUserCache(memberList);
       }
+
       if (!memberLimitExceeded) {
         Response addMembersRes =
             memberService.handleMemberAddition(memberList, groupId, userId, userGroupsList);
