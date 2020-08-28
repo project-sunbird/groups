@@ -32,6 +32,7 @@ public interface IResponseMessage {
     String EXCEEDED_MEMBER_MAX_LIMIT = "EXCEEDED_MEMBER_MAX_LIMIT";
     String EXCEEDED_GROUP_MAX_LIMIT = "EXCEEDED_GROUP_MAX_LIMIT";
     String EXCEEDED_ACTIVITY_MAX_LIMIT = "EXCEEDED_ACTIVITY_MAX_LIMIT";
+    String SERVICE_UNAVAILABLE = "SERVICE UNAVAILABLE";
   }
 
   interface Message {
@@ -51,5 +52,6 @@ public interface IResponseMessage {
     String DB_INSERTION_FAIL = "DB insert operation failed.";
     String DB_UPDATE_FAIL = "Db update operation failed.";
     String INTERNAL_ERROR = "Process failed,please try again later.";
+    String SERVICE_UNAVAILABLE = "SERVICE_UNAVAILABLE";
   }
 }

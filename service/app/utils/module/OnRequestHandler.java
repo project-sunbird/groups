@@ -80,9 +80,9 @@ public class OnRequestHandler implements ActionCreator {
         Result result =
             ResponseHandler.handleFailureResponse(
                 new BaseException(
-                    JsonKey.UNAUTHORIZED,
+                    IResponseMessage.Key.SERVICE_UNAVAILABLE,
                     headerCode.getErrorMessage(),
-                    ResponseCode.UNAUTHORIZED.getResponseCode()),
+                    ResponseCode.SERVICE_UNAVAILABLE.getResponseCode()),
                 request);
         return CompletableFuture.completedFuture(result);
       }

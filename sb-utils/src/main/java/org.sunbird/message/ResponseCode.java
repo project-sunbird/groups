@@ -26,6 +26,8 @@ public enum ResponseCode {
   dbInsertionError(IResponseMessage.DB_INSERTION_FAIL, IResponseMessage.Message.DB_INSERTION_FAIL),
   dbUpdateError(IResponseMessage.DB_UPDATE_FAIL, IResponseMessage.Message.DB_UPDATE_FAIL),
   internalError(IResponseMessage.INTERNAL_ERROR, IResponseMessage.Message.INTERNAL_ERROR),
+  serviceUnAvailable(
+      IResponseMessage.Key.SERVICE_UNAVAILABLE, IResponseMessage.Message.SERVICE_UNAVAILABLE),
   OK(200),
   CLIENT_ERROR(400),
   SERVER_ERROR(500),
