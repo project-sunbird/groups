@@ -145,7 +145,6 @@ public class CreateGroupActorTest extends BaseActorTest {
     members.add(member);
     member = new HashMap<>();
     members.add(member);
-    reqObj.getRequest().put(JsonKey.MEMBERS, members);
     Map<String, Object> activity = new HashMap<>();
     activity.put(JsonKey.TYPE, "COURSE");
     activity.put(JsonKey.ID, "courseId1");
