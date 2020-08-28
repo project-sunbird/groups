@@ -128,6 +128,15 @@ public class CreateGroupActorTest extends BaseActorTest {
     mockCacheActor();
     PowerMockito.mockStatic(Localizer.class);
     when(Localizer.getInstance()).thenReturn(null);
+    PowerMockito.mockStatic(SystemConfigUtil.class);
+
+    PowerMockito.mockStatic(PropertiesCache.class);
+    propertiesCache = mock(PropertiesCache.class);
+    when(PropertiesCache.getInstance()).thenReturn(propertiesCache);
+    when(PropertiesCache.getInstance().getProperty(JsonKey.MAX_GROUP_MEMBERS_LIMIT))
+        .thenReturn("4");
+    when(PropertiesCache.getInstance().getProperty(JsonKey.MAX_ACTIVITY_LIMIT)).thenReturn("2");
+    when(PropertiesCache.getInstance().getProperty(JsonKey.MAX_GROUP_LIMIT)).thenReturn("4");
     TestKit probe = new TestKit(system);
     ActorRef subject = system.actorOf(props);
     Request reqObj = createGroupReq();
