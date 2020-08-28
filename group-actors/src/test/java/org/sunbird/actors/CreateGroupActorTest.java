@@ -144,7 +144,12 @@ public class CreateGroupActorTest extends BaseActorTest {
     member.put(JsonKey.USER_ID, "userID4");
     members.add(member);
     member = new HashMap<>();
+    member.put(JsonKey.USER_ID, "userID5");
     members.add(member);
+    member = new HashMap<>();
+    member.put(JsonKey.USER_ID, "userID6");
+    members.add(member);
+    reqObj.getRequest().put(JsonKey.MEMBERS, members);
     Map<String, Object> activity = new HashMap<>();
     activity.put(JsonKey.TYPE, "COURSE");
     activity.put(JsonKey.ID, "courseId1");
@@ -158,6 +163,7 @@ public class CreateGroupActorTest extends BaseActorTest {
     Assert.assertTrue(null != res && res.getResponseCode() == 200);
     Assert.assertNotNull(res.getResult().get(JsonKey.GROUP_ID));
     Map error = (Map) res.getResult().get(JsonKey.ERROR);
+    System.out.println("error max limit" + error);
     List memberErrorList = (List) error.get(JsonKey.MEMBERS);
     List activityErrorList = (List) error.get(JsonKey.ACTIVITIES);
     Assert.assertEquals(
