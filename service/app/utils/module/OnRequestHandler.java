@@ -80,7 +80,7 @@ public class OnRequestHandler implements ActionCreator {
         Result result =
             ResponseHandler.handleFailureResponse(
                 new BaseException(
-                    IResponseMessage.Key.SERVICE_UNAVAILABLE,
+                    ResponseCode.SERVICE_UNAVAILABLE.getErrorCode(),
                     headerCode.getErrorMessage(),
                     ResponseCode.SERVICE_UNAVAILABLE.getResponseCode()),
                 request);
