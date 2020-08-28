@@ -51,9 +51,11 @@ public class OnRequestHandler implements ActionCreator {
         if (result != null) return result;
 
         Map userAuthentication = RequestInterceptor.verifyRequestData(request);
-        String message = (String)userAuthentication.get(JsonKey.USER_ID);
-        if(userAuthentication.get(JsonKey.MANAGED_FOR) != null) {
-          request = request.addAttr(Attrs.MANAGED_FOR, (String) userAuthentication.get(JsonKey.MANAGED_FOR));
+        String message = (String) userAuthentication.get(JsonKey.USER_ID);
+        if (userAuthentication.get(JsonKey.MANAGED_FOR) != null) {
+          request =
+              request.addAttr(
+                  Attrs.MANAGED_FOR, (String) userAuthentication.get(JsonKey.MANAGED_FOR));
         }
         request = initializeContext(request, message);
         if (!JsonKey.USER_UNAUTH_STATES.contains(message)) {
@@ -78,7 +80,7 @@ public class OnRequestHandler implements ActionCreator {
         Result result =
             ResponseHandler.handleFailureResponse(
                 new BaseException(
-                    ResponseCode.CLIENT_ERROR.getErrorCode(),
+                    JsonKey.UNAUTHORIZED,
                     headerCode.getErrorMessage(),
                     ResponseCode.UNAUTHORIZED.getResponseCode()),
                 request);
@@ -102,7 +104,7 @@ public class OnRequestHandler implements ActionCreator {
     Result result =
         ResponseHandler.handleFailureResponse(
             new BaseException(
-                ResponseCode.CLIENT_ERROR.getErrorCode(),
+                JsonKey.UNAUTHORIZED,
                 code.getErrorMessage(),
                 ResponseCode.UNAUTHORIZED.getResponseCode()),
             request);
