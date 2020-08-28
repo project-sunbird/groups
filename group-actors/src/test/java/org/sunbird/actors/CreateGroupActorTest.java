@@ -130,6 +130,7 @@ public class CreateGroupActorTest extends BaseActorTest {
     when(Localizer.getInstance()).thenReturn(null);
     TestKit probe = new TestKit(system);
     ActorRef subject = system.actorOf(props);
+    Request reqObj = createGroupReq();
     List<Map<String, Object>> members =
         (List<Map<String, Object>>) reqObj.getRequest().get(JsonKey.MEMBERS);
     List<Map<String, Object>> activities =
@@ -158,9 +159,11 @@ public class CreateGroupActorTest extends BaseActorTest {
     activity.put(JsonKey.TYPE, "COURSE");
     activity.put(JsonKey.ID, "courseId12");
     activities.add(activity);
+    reqObj.getRequest().put(JsonKey.ACTIVITIES, activities);
     subject.tell(reqObj, probe.getRef());
     Response res = probe.expectMsgClass(Duration.ofSeconds(20), Response.class);
     Assert.assertTrue(null != res && res.getResponseCode() == 200);
+    System.out.println("response " + res.getResult());
     Assert.assertNotNull(res.getResult().get(JsonKey.GROUP_ID));
     Map error = (Map) res.getResult().get(JsonKey.ERROR);
     System.out.println("error max limit" + error);
