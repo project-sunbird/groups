@@ -8,8 +8,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.sunbird.actor.core.ActorConfig;
+import org.sunbird.exception.AuthorizationException;
 import org.sunbird.exception.BaseException;
-import org.sunbird.message.IResponseMessage;
 import org.sunbird.message.ResponseCode;
 import org.sunbird.models.Group;
 import org.sunbird.models.MemberResponse;
@@ -59,10 +59,7 @@ public class UpdateGroupActor extends BaseActor {
 
     String userId = group.getUpdatedBy();
     if (StringUtils.isEmpty(userId)) {
-      throw new BaseException(
-          IResponseMessage.Key.UNAUTHORIZED_USER,
-          IResponseMessage.Message.UNAUTHORIZED_USER,
-          ResponseCode.UNAUTHORIZED.getCode());
+      throw new AuthorizationException.NotAuthorized();
     }
 
     Map<String, List<Map<String, String>>> responseMap = new HashMap<>();

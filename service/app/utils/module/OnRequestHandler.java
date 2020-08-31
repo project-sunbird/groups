@@ -13,14 +13,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+import org.sunbird.exception.AuthorizationException;
 import org.sunbird.exception.BaseException;
 import org.sunbird.message.IResponseMessage;
 import org.sunbird.message.ResponseCode;
 import org.sunbird.request.HeaderParam;
-import org.sunbird.service.UserService;
-import org.sunbird.service.UserServiceImpl;
 import org.sunbird.util.JsonKey;
-import org.sunbird.util.ProjectUtil;
 import org.sunbird.util.SystemConfigUtil;
 import org.sunbird.util.helper.PropertiesCache;
 import play.http.ActionCreator;
@@ -31,9 +29,7 @@ import play.mvc.Result;
 public class OnRequestHandler implements ActionCreator {
 
   private static Logger logger = LoggerFactory.getLogger(OnRequestHandler.class);
-  public static boolean isServiceHealthy = true;
   private static String custodianOrgHashTagId;
-  private UserService userService = UserServiceImpl.getInstance();
   private ObjectMapper mapper = new ObjectMapper();
 
   @Override
@@ -47,9 +43,7 @@ public class OnRequestHandler implements ActionCreator {
               JsonKey.REQUEST_MESSAGE_ID,
               request.getHeaders().get(JsonKey.REQUEST_MESSAGE_ID).get());
         }
-        CompletionStage<Result> result = checkForServiceHealth(request);
-        if (result != null) return result;
-
+        CompletionStage<Result> result;
         Map userAuthentication = RequestInterceptor.verifyRequestData(request);
         String message = (String) userAuthentication.get(JsonKey.USER_ID);
         if (userAuthentication.get(JsonKey.MANAGED_FOR) != null) {
@@ -62,7 +56,7 @@ public class OnRequestHandler implements ActionCreator {
           request = request.addAttr(Attrs.USERID, message);
           result = delegate.call(request);
         } else if (JsonKey.UNAUTHORIZED.equals(message)) {
-          result = onDataValidationError(request, message);
+          result = getAuthorizedResult(request, message);
         } else {
           result = delegate.call(request);
         }
@@ -72,42 +66,10 @@ public class OnRequestHandler implements ActionCreator {
     };
   }
 
-  public static CompletionStage<Result> checkForServiceHealth(Http.Request request) {
-    if (Boolean.parseBoolean((ProjectUtil.getConfigValue(JsonKey.SUNBIRD_HEALTH_CHECK_ENABLE)))
-        && !request.path().endsWith(JsonKey.HEALTH)) {
-      if (!isServiceHealthy) {
-        ResponseCode headerCode = ResponseCode.SERVICE_UNAVAILABLE;
-        Result result =
-            ResponseHandler.handleFailureResponse(
-                new BaseException(
-                    ResponseCode.SERVICE_UNAVAILABLE.getErrorCode(),
-                    headerCode.getErrorMessage(),
-                    ResponseCode.SERVICE_UNAVAILABLE.getResponseCode()),
-                request);
-        return CompletableFuture.completedFuture(result);
-      }
-    }
-    return null;
-  }
-
-  /**
-   * This method will do request data validation for GET method only. As a GET request user must
-   * send some key in header.
-   *
-   * @param request Request
-   * @param errorMessage String
-   * @return CompletionStage<Result>
-   */
-  public CompletionStage<Result> onDataValidationError(Http.Request request, String errorMessage) {
+  public CompletionStage<Result> getAuthorizedResult(Http.Request request, String errorMessage) {
     logger.error("Data error found--" + errorMessage);
-    ResponseCode code = ResponseCode.getResponse(errorMessage);
     Result result =
-        ResponseHandler.handleFailureResponse(
-            new BaseException(
-                JsonKey.UNAUTHORIZED,
-                code.getErrorMessage(),
-                ResponseCode.UNAUTHORIZED.getResponseCode()),
-            request);
+        ResponseHandler.handleFailureResponse(new AuthorizationException.NotAuthorized(), request);
     return CompletableFuture.completedFuture(result);
   }
 

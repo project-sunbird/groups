@@ -25,7 +25,7 @@ public interface IResponseMessage {
   String GROUP_NOT_FOUND = "GROUP_NOT_FOUND";
 
   interface Key {
-    String UNAUTHORIZED_USER = "UNAUTHORIZED_USER";
+    String UNAUTHORIZED = "UNAUTHORIZED";
     String KEY_CLOAK_DEFAULT_ERROR = "KEY_CLOAK_DEFAULT_ERROR";
     String UNABLE_TO_COMMUNICATE_WITH_ACTOR = "UNABLE_TO_COMMUNICATE_WITH_ACTOR";
     String EXCEEDED_MEMBER_MAX_LIMIT = "EXCEEDED_MEMBER_MAX_LIMIT";
@@ -35,7 +35,6 @@ public interface IResponseMessage {
   }
 
   interface Message {
-    String UNAUTHORIZED_USER = "You are not authorized.";
     String KEY_CLOAK_DEFAULT_ERROR = "server error at sso.";
     String UNABLE_TO_COMMUNICATE_WITH_ACTOR = "Unable to communicate with actor.";
     String EXCEEDED_MEMBER_MAX_LIMIT = "Exceeded the member max size limit";
@@ -52,5 +51,6 @@ public interface IResponseMessage {
     String DB_UPDATE_FAIL = "Db update operation failed.";
     String INTERNAL_ERROR = "Process failed,please try again later.";
     String SERVICE_UNAVAILABLE = "SERVICE_UNAVAILABLE";
+    String UNAUTHORIZED = "You are not authorized.";
   }
 }
