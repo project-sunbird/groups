@@ -105,7 +105,9 @@ public class CreateGroupActor extends BaseActor {
         cacheUtil.deleteCacheSync(userId);
         deleteUserCache(memberList);
       }
-
+      // if memberLimitExceeded is true, then members are not added in to the group,but group will
+      // be created, and groupId is returned in response ,with a errorMsg EXCEEDED_MEMBER_MAX_LIMIT
+      // this is not used/expected call flow for creating group. Doing this for direct api hits.
       if (!memberLimitExceeded) {
         Response addMembersRes =
             memberService.handleMemberAddition(memberList, groupId, userId, userGroupsList);
