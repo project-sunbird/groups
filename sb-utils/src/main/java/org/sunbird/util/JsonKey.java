@@ -71,7 +71,6 @@ public interface JsonKey {
   String SSO_REALM = "sso.realm";
   String SSO_URL = "sso.url";
   String SSO_USERNAME = "sso.username";
-  String MESSAGE_ID = "X-msgId";
   String ANONYMOUS = "Anonymous";
   List<String> USER_UNAUTH_STATES = Arrays.asList(JsonKey.UNAUTHORIZED, JsonKey.ANONYMOUS);
   String REQUEST = "request";
@@ -81,7 +80,6 @@ public interface JsonKey {
   String DOT_SEPARATOR = ".";
   String SHA_256_WITH_RSA = "SHA256withRSA";
   String REQUEST_ID = "requestId";
-  String VERSION_2 = "v2";
   String ACCESS_TOKEN_PUBLICKEY_BASEPATH = "accesstoken.publickey.basepath";
   String ACCESS_TOKEN_PUBLICKEY_KEYPREFIX = "accesstoken.publickey.keyprefix";
   String ACCESS_TOKEN_PUBLICKEY_KEYCOUNT = "accesstoken.publickey.keycount";
@@ -109,8 +107,6 @@ public interface JsonKey {
   String HEADERS = "headers";
   String ACTIVITY_INFO = "activityInfo";
   String IDENTIFIER = "identifier";
-  String CONTENT_SERVICE = "content-service";
-  String CONTENT_TYPE = "contentType";
   String FIRSTNAME = "firstName";
   String LASTNAME = "lastName";
   String USER_SERVICE_SYSTEM_SETTING_URL = "sunbird_us_system_setting_url";
@@ -123,7 +119,7 @@ public interface JsonKey {
   String ROOT_ORG_ID = "rootOrgId";
   String ROLLUP = "rollup";
   String APP_ID = "appId";
-  String DEVICE_ID = "deviceId";
+  String DEVICE_ID = "did";
   String ACTOR_ID = "actorId";
   String DEFAULT_CONSUMER_ID = "internal";
   String CONSUMER = "consumer";
