@@ -6,32 +6,21 @@ import java.util.List;
 /** This interface will contains all the constants that's used throughout this application. */
 public interface JsonKey {
 
-  String CLASS = "class";
-  String DATA = "data";
-  String EKS = "eks";
   String ID = "id";
-  String LEVEL = "level";
   String MESSAGE = "message";
   String METHOD = "method";
   String REQUEST_MESSAGE_ID = "msgId";
-  String STACKTRACE = "stacktrace";
   String VER = "ver";
   String OK = "ok";
   String LOG_LEVEL = "logLevel";
   String ERROR = "error";
   String EMPTY_STRING = "";
   String RESPONSE = "response";
-  String ADDRESS = "address";
   String KEY = "key";
-  String ERROR_MSG = "error_msg";
-  String ATTRIBUTE = "attribute";
-  String ERRORS = "errors";
   String SUCCESS = "success";
   String API_VERSION = "v1";
-  String REQ_ID = "reqId";
   String USER_DB = "user_db";
   String SUNBIRD_CASSANDRA_IP = "sunbird_cassandra_host";
-  String SUNBIRD = "sunbird";
   String GROUP_ID = "groupId";
   String GROUP_DESC = "description";
   String GROUP_NAME = "name";
@@ -104,7 +93,6 @@ public interface JsonKey {
   String SUNBIRD_CS_AUTH_KEY = "sunbird_cs_token_key";
   String FIELDS = "fields";
   String AUTHORIZATION = "Authorization";
-  String HEADERS = "headers";
   String ACTIVITY_INFO = "activityInfo";
   String IDENTIFIER = "identifier";
   String FIRSTNAME = "firstName";
@@ -116,14 +104,11 @@ public interface JsonKey {
   Object API_CALL = "API_CALL";
   String USER = "user";
   String ACTOR_TYPE = "actorType";
-  String ROOT_ORG_ID = "rootOrgId";
-  String ROLLUP = "rollup";
   String APP_ID = "appId";
   String DEVICE_ID = "did";
   String ACTOR_ID = "actorId";
   String DEFAULT_CONSUMER_ID = "internal";
   String CONSUMER = "consumer";
-  String ADDITIONAL_INFO = "ADDITIONAL_INFO";
   String UPDATE = "update";
   String CREATE = "create";
   String DELETE = "delete";
