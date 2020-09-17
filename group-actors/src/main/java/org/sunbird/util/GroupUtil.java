@@ -85,7 +85,7 @@ public class GroupUtil {
     }
     int maxGroupLimit =
         Integer.parseInt(PropertiesCache.getInstance().getProperty(JsonKey.MAX_GROUP_LIMIT));
-    if (groupCount > maxGroupLimit) {
+    if (groupCount >= maxGroupLimit) {
       logger.error("List of groups exceeded the max limit:{}", groupCount);
       throw new BaseException(
           IResponseMessage.Key.EXCEEDED_GROUP_MAX_LIMIT,
